@@ -15,7 +15,7 @@ public class Task4 {
         Scanner scanner = new Scanner(System.in);
         try {
             System.out.print("Введите длины сторон треугольника: ");
-            List<Double> points = Arrays.stream(scanner.nextLine().split(" "))
+            List<Double> points = Arrays.stream(scanner.next().split(" "))
                     .map(Double::parseDouble)
                     .sorted(Double::compareTo)
                     .collect(Collectors.toList());

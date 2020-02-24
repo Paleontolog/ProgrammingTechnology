@@ -1,0 +1,8 @@
+package tasks.bank_application.constants;
+
+public enum OperationResults {
+    SUCCESS, USER_ALREADY_EXISTS, USER_CREATE_ERROR,
+    ACCOUNT_CREATE_ERROR, ACCOUNT_DOES_NOT_EXIST, ADD_MONEY_ERROR,
+    WITHDRAW_MONEY_ERROR, USER_DOES_NOT_EXISTS
+
+}
