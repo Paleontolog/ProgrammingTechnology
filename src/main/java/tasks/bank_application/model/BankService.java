@@ -2,6 +2,7 @@ package tasks.bank_application.model;
 
 import tasks.bank_application.constants.OperationResults;
 import tasks.bank_application.entities.Account;
+import tasks.bank_application.entities.Operation;
 import tasks.bank_application.entities.User;
 
 import java.math.BigDecimal;
@@ -17,8 +18,9 @@ public interface BankService {
     BigDecimal withdrawMoney(Account account, BigDecimal money);
     BigDecimal withdrawMoney(Account account, BigDecimal money, boolean isLogged);
     OperationResults transfer(Account account, String phone, BigDecimal money);
-    void destroyConnection() throws SQLException;
     User login(String name, String password);
     List<Account> getUserAccounts(User user);
+    List<Operation> getUserOperationStory(Account account);
+    void destroyConnection() throws SQLException;
 }
 

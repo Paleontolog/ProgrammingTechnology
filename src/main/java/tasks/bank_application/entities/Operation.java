@@ -18,4 +18,10 @@ public class Operation {
     private BigDecimal transAmount;
     private BigDecimal beforeTransfer;
     private BigDecimal afterTransfer;
+
+    @Override
+    public String toString() {
+        return String.format("%-10s%-15s%10s%25s%20s%20s%20s", id, operationDate, fromId, toId,
+                transAmount, beforeTransfer, afterTransfer);
+    }
 }

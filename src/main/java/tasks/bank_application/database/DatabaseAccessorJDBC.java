@@ -7,6 +7,7 @@ import tasks.bank_application.entities.Operation;
 import tasks.bank_application.entities.User;
 import tasks.bank_application.utils.PropertyLoader;
 
+import java.beans.PersistenceDelegate;
 import java.io.*;
 import java.math.BigDecimal;
 import java.sql.*;
@@ -174,6 +175,36 @@ public class DatabaseAccessorJDBC implements DatabaseAccessor {
         }
         return 0;
     }
+
+    private Operation mapToOperation(ResultSet resultSet) throws SQLException {
+        return new Operation(resultSet.getLong("ID"),
+                resultSet.getDate("OPERATION_DATE"),
+                resultSet.getLong("FROM_ID"),
+                resultSet.getLong("TO_ID"),
+                resultSet.getBigDecimal("TRANS_AMOUNT"),
+                resultSet.getBigDecimal("BEFORE_TRANSFER"),
+                resultSet.getBigDecimal("AFTER_TRANSFER"));
+    }
+
+    @Override
+    public List<Operation> getUserOperation(Long accountID) {
+        String query = "SELECT * FROM BANK.OPERATION WHERE FROM_ID=? OR TO_ID=?";
+        List<Operation> accountList = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setLong(1, accountID);
+            statement.setLong(2, accountID);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                accountList.add(mapToOperation(resultSet));
+            }
+            resultSet.close();
+            return accountList;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
 
     @Override
     public void destroyConnection() throws SQLException {

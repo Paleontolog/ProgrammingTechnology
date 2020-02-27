@@ -16,5 +16,8 @@ public interface DatabaseAccessor {
     int setMoney(Long accountId, BigDecimal money);
     List<Account> getUserAccounts(Long userId);
     int logOperation(Operation operation);
-    public void destroyConnection() throws SQLException;
+    List<Operation> getUserOperation(Long accountID);
+    void destroyConnection() throws SQLException;
+
+
 }

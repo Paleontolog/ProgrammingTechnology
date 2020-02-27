@@ -6,6 +6,7 @@ import tasks.bank_application.constants.OperationResults;
 import tasks.bank_application.database.DatabaseAccessorJDBC;
 import tasks.bank_application.database.DatabaseConnector;
 import tasks.bank_application.entities.Account;
+import tasks.bank_application.entities.Operation;
 import tasks.bank_application.entities.User;
 import tasks.bank_application.model.BankService;
 import tasks.bank_application.model.BankServiceImpl;
@@ -98,22 +99,31 @@ public class UserInterface {
         }
     }
 
-    public void addMoney() {
+    private Account chooseAccount() {
         System.out.print("Ваши счета: ");
         List<Account> accountList = bankService.getUserAccounts(currentUser);
         printUserAccounts(accountList);
-        System.out.print("Выберите счёт для пополнения: ");
+        System.out.print("Выберите счёт: ");
         int n = scanner.nextInt();
         if (n > accountList.size() - 1) {
             System.out.println("Выбран неверный счёт");
+            return null;
+        }
+        return accountList.get(n);
+    }
+
+    public void addMoney() {
+
+        Account account = chooseAccount();
+        if (account == null) {
             return;
         }
+
         System.out.print("Введите валюту (USD, RUB, EUR): ");
         Currencies currency = Currencies.valueOf(scanner.next());
 
         System.out.print("Введите сумму: ");
         BigDecimal money = scanner.nextBigDecimal();
-        Account account = accountList.get(n);
 
         money = Converter.autoConvert(money, currency, account.getAccCode());
 
@@ -127,17 +137,10 @@ public class UserInterface {
 
     public void transfer() {
 
-        System.out.println("Ваши счета: ");
-        List<Account> accountList = bankService.getUserAccounts(currentUser);
-        printUserAccounts(accountList);
-        System.out.print("Выберите свой счёт: ");
-        int n = scanner.nextInt();
-        if (n > accountList.size() - 1) {
-            System.out.println("Выбран неверный счёт");
+        Account account = chooseAccount();
+        if (account == null) {
             return;
         }
-        Account account = accountList.get(n);
-
         System.out.print("Введите сумму: ");
         BigDecimal money = scanner.nextBigDecimal();
 
@@ -158,9 +161,24 @@ public class UserInterface {
         }
     }
 
-    public void printAccounts() {
-        printUserAccounts(bankService.getUserAccounts(currentUser));
+
+    private void showOperation() {
+        Account account = chooseAccount();
+        if (account == null) {
+            return;
+        }
+
+        List<Operation> operations = bankService.getUserOperationStory(account);
+
+        System.out.println("№ " + " ID операции " + " Дата операции " + " Номер счета перевода " +
+                " Номер счета получателя " + " Сумма перевода " + " На счету до поревода " +
+                " На счету после перевода ");
+
+        for (int i = 0; i < operations.size(); i++) {
+            System.out.println(i + "      " + operations.get(i));
+        }
     }
+
 
     public void mainLoop() throws SQLException {
         boolean close = false;
@@ -190,6 +208,7 @@ public class UserInterface {
                         System.out.println("add_money - внести деньги на счёт");
                         System.out.println("transfer - перевести деньги");
                         System.out.println("delog - разлогиниться");
+                        System.out.println("sh_op - показать все операции по конкретному счёту");
                     }
                     break;
                 default:
@@ -199,13 +218,16 @@ public class UserInterface {
                                 createAccount();
                                 break;
                             case "print_accs":
-                                printAccounts();
+                                printUserAccounts(bankService.getUserAccounts(currentUser));
                                 break;
                             case "add_money":
                                 addMoney();
                                 break;
                             case "transfer":
                                 transfer();
+                                break;
+                            case  "sh_op":
+                                showOperation();
                                 break;
                             case "delog":
                                 currentUser = null;
@@ -221,7 +243,7 @@ public class UserInterface {
                     break;
             }
         }
-        bankService.destroyConnection();
+        destroyConnection();
     }
 
     public static void main(String[] args) {

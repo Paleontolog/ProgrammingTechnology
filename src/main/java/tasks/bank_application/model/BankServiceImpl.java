@@ -160,4 +160,9 @@ public class BankServiceImpl implements BankService {
     public List<Account> getUserAccounts(User user) {
         return databaseAccessor.getUserAccounts(user.getId());
     }
+
+    @Override
+    public List<Operation> getUserOperationStory(Account account) {
+        return databaseAccessor.getUserOperation(account.getId());
+    }
 }
