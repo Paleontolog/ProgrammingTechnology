@@ -8,19 +8,19 @@ import java.math.RoundingMode;
 
 public class Converter {
     public static BigDecimal usdToRub(BigDecimal usd) {
-        return usd.multiply(Currencies.USD.getRubValue()).round(MathContext.DECIMAL32);
+        return usd.multiply(Currencies.USD.getRubValue()).round(new MathContext(2));
     }
 
     public static BigDecimal eurToRub(BigDecimal eur) {
-        return eur.multiply(Currencies.EUR.getRubValue()).round(MathContext.DECIMAL32);
+        return eur.multiply(Currencies.EUR.getRubValue()).round(new MathContext(2));
     }
 
     public static BigDecimal rubToEur(BigDecimal rub) {
-        return rub.divide(Currencies.EUR.getRubValue(), RoundingMode.DOWN);
+        return rub.divide(Currencies.EUR.getRubValue(), 2, RoundingMode.DOWN);
     }
 
     public static BigDecimal rubToUsd(BigDecimal rub) {
-        return rub.divide(Currencies.USD.getRubValue(), RoundingMode.DOWN);
+        return rub.divide(Currencies.USD.getRubValue(), 2, RoundingMode.DOWN);
     }
 
     public static BigDecimal eurToUsd(BigDecimal eur) {
