@@ -25,6 +25,7 @@ public class AccountDAO {
     @Column(name = "AMOUNT", nullable = false)
     private BigDecimal amount;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "ACC_CODE", nullable = false)
     private Currencies accCode;
 

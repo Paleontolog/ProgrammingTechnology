@@ -20,9 +20,13 @@ ext {
 
 
 dependencies {
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.2.5.RELEASE'
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.2.5.RELEASE'
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.2.5.RELEASE'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.2.5.RELEASE'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.2.5.RELEASE'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.2.5.RELEASE'
+
+
+    compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.0'
+
 
     implementation 'com.h2database:h2:1.4.199'
     implementation 'org.hibernate:hibernate-core:5.4.2.Final'
@@ -36,10 +40,12 @@ dependencies {
     implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 
 
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    //implementation 'org.springframework.security:spring-security-jwt'
+    compile "io.springfox:springfox-bean-validators:2.9.2"
 
-    implementation group: 'org.springframework.security.oauth', name: 'spring-security-oauth2', version: '2.4.0.RELEASE'
+
+    //implementation 'org.springframework.security:spring-security-jwt'
+    //implementation group: 'org.springframework.security.oauth', name: 'spring-security-oauth2', version: '2.4.0.RELEASE'
+
 
     //compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '2.2.5.RELEASE'
  //   compile group: 'io.swagger', name: 'swagger-annotations', version: '1.6.0'

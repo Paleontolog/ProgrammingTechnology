@@ -1,5 +1,6 @@
 package com.bankapp.entities.dao;
 
+import com.bankapp.sequrity.entities.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,9 +26,11 @@ public class UserDAO {
     private String password;
     @Column(name = "ADDRESS", nullable = false)
     private String address;
-
     @OneToMany(mappedBy = "client", fetch=FetchType.LAZY)
     private List<AccountDAO> accounts;
     @Column(name = "PHONE", nullable = false, unique = true)
     private String phone;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<Role> userRoles;
 }

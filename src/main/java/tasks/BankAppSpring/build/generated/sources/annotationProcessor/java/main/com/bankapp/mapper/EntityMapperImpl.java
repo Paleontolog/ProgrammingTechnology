@@ -9,28 +9,11 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2020-03-14T01:27:29+0400",
+    date = "2020-03-15T02:49:39+0400",
     comments = "version: 1.3.1.Final, compiler: javac, environment: Java 1.8.0_241 (Oracle Corporation)"
 )
 @Component
 public class EntityMapperImpl implements EntityMapper {
-
-    @Override
-    public UserDTO userDaoToDto(UserDAO userDAO) {
-        if ( userDAO == null ) {
-            return null;
-        }
-
-        UserDTO userDTO = new UserDTO();
-
-        userDTO.setId( userDAO.getId() );
-        userDTO.setLogin( userDAO.getLogin() );
-        userDTO.setPassword( userDAO.getPassword() );
-        userDTO.setAddress( userDAO.getAddress() );
-        userDTO.setPhone( userDAO.getPhone() );
-
-        return userDTO;
-    }
 
     @Override
     public AccountDTO accountDaoToDto(AccountDAO accountDAO) {

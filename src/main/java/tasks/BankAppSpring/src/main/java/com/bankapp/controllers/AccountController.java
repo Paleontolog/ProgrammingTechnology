@@ -7,6 +7,7 @@ import com.bankapp.entities.dto.AccountDTO;
 import com.bankapp.entities.dto.OneAccountOperationDTO;
 import com.bankapp.entities.dto.TransferOperationDTO;
 import com.bankapp.mapper.EntityMapper;
+import com.bankapp.sequrity.response.MessageResponse;
 import com.bankapp.service.BankService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,7 +33,6 @@ public class AccountController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-
     @GetMapping(value = "/{id}")
     public ResponseEntity<List<AccountDTO>> getUserAccounts(@PathVariable("id") Long id) {
         List<AccountDTO> dtoList =
@@ -49,9 +49,10 @@ public class AccountController {
         if (fromAccount.isPresent()) {
             bankService.addMoney(fromAccount.get(),
                     operation.getValue());
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(new MessageResponse("Operation success"), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new MessageResponse("Account not found!"),
+                    HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -62,9 +63,10 @@ public class AccountController {
         if (fromAccount.isPresent()) {
             bankService.withdrawMoney(fromAccount.get(),
                     operation.getValue());
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(new MessageResponse("Operation success"), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new MessageResponse("Account not found!"),
+                    HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -74,7 +76,8 @@ public class AccountController {
                 bankService.getAccountById(operation.getFromAccountId());
 
         if (!fromAccount.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new MessageResponse("Account not found!"),
+                    HttpStatus.BAD_REQUEST);
         }
 
         OperationResults results =
@@ -82,8 +85,10 @@ public class AccountController {
                         operation.getToNumber(), operation.getTransAmount());
 
         if (results == OperationResults.SUCCESS) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(new MessageResponse("Operation success"), HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.CONFLICT);
+
+        return new ResponseEntity<>(new MessageResponse(results.toString()),
+                HttpStatus.BAD_REQUEST);
     }
 }
