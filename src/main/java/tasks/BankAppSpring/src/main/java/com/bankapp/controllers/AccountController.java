@@ -4,12 +4,14 @@ import com.bankapp.constants.OperationResults;
 import com.bankapp.entities.dao.AccountDAO;
 import com.bankapp.entities.dto.*;
 import com.bankapp.mapper.EntityMapper;
+import com.bankapp.sequrity.entities.UserDetailsImpl;
 import com.bankapp.sequrity.response.MessageResponse;
 import com.bankapp.service.BankService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,16 +20,24 @@ import java.util.stream.Collectors;
 
 @CrossOrigin(maxAge = 3600)
 @RestController
-@RequestMapping("/api/accounts")
+@RequestMapping("/api/account")
 public class AccountController {
     @Autowired
     private BankService bankService;
     @Autowired
     private EntityMapper mapper;
 
+    private String getUsernameFromContext() {
+        return ((UserDetailsImpl)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+                .getUsername();
+    }
+
+
     @PostMapping("/create")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<?> createAccount(@RequestBody AccountCreateRequest account) {
+        account.setClientName(getUsernameFromContext());
         OperationResults results = bankService.createAccount(account);
         if (results == OperationResults.USER_DOES_NOT_EXISTS) {
             return new ResponseEntity<>(new MessageResponse("User not found!"),
@@ -36,9 +46,10 @@ public class AccountController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping(value = "/{name}")
+    @GetMapping(value = "/accs")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<List<AccountDTO>> getUserAccounts(@PathVariable("name") String name) {
+    public ResponseEntity<List<AccountDTO>> getUserAccounts() {
+        String name = getUsernameFromContext();
         List<AccountDTO> dtoList =
                 bankService.getUserAccounts(name).stream()
                         .map(mapper::accountDaoToDto)
@@ -101,9 +112,10 @@ public class AccountController {
     }
 
 
-    @GetMapping("/history/{name}")
+    @GetMapping("/history")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<?> getHistory(@PathVariable("name") String name) {
+    public ResponseEntity<?> getHistory() {
+        String name = getUsernameFromContext();
         List<OperationDTO> dtoList = bankService.getUserOperationStory(name);
         return new ResponseEntity<>(dtoList, HttpStatus.OK);
     }
@@ -129,6 +141,4 @@ public class AccountController {
         List<UserDTO> dtoList = bankService.getAllUser();
         return new ResponseEntity<>(dtoList, HttpStatus.OK);
     }
-
-
 }
