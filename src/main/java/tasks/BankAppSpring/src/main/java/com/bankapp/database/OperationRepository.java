@@ -6,5 +6,6 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface OperationRepository extends CrudRepository<OperationDAO, Long> {
-    List<OperationDAO> findAllByFromUserIdAndToUserId(Long fromId, Long toId);
+    List<OperationDAO> findAllByFromUserIdOrToUserId(Long fromId, Long toId);
+    List<OperationDAO> findAll();
 }

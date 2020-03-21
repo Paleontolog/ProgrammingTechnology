@@ -1,6 +1,6 @@
 package com.bankapp.entities.dao;
 
-import com.bankapp.entities.dto.UserDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,13 +25,13 @@ public class OperationDAO {
     private Date operationDate;
 
 
-    @ManyToOne(targetEntity = UserDAO.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = AccountDAO.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "FROM_ID")
-    private UserDAO fromUser;
+    private AccountDAO fromUser;
 
-    @ManyToOne(targetEntity = UserDAO.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = AccountDAO.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "TO_ID")
-    private UserDAO toUser;
+    private AccountDAO toUser;
 
     @Column(name = "TRANS_AMOUNT", nullable = false)
     private BigDecimal transAmount;
@@ -42,13 +42,11 @@ public class OperationDAO {
     @Column(name = "AFTER_TRANSFER", nullable = false)
     private BigDecimal afterTransfer;
 
-    public OperationDAO(Long fromId, Long toId, Date date, BigDecimal money,
+    public OperationDAO(AccountDAO fromId, AccountDAO toId, Date date, BigDecimal money,
                         BigDecimal beforeTransfer, BigDecimal afterTransfer) {
         this.operationDate = date;
-        this.fromUser = new UserDAO();
-        this.toUser = new UserDAO();
-        this.fromUser.setId(fromId);
-        this.toUser.setId(toId);
+        this.fromUser = fromId;
+        this.toUser = toId;
         this.transAmount = money;
         this.beforeTransfer = beforeTransfer;
         this.afterTransfer = afterTransfer;
@@ -57,8 +55,7 @@ public class OperationDAO {
 
     @Override
     public String toString() {
-        return String.format("%-10s%-15s%10s%25s%20s%20s%20s", id, operationDate,
-                fromUser.getId(), toUser.getId(),
+        return String.format("%-10s%-15s%20s%20s%20s", id, operationDate,
                 transAmount, beforeTransfer, afterTransfer);
     }
 }

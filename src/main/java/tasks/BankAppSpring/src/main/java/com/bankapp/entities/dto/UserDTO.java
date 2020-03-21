@@ -9,10 +9,9 @@ import java.util.Set;
 @NoArgsConstructor
 @Data
 public class UserDTO {
-    private Long id;
     private String login;
     private String password;
     private String address;
     private String phone;
-    private Set<Role> roles;
+    private Set<String> roles;
 }

@@ -20,6 +20,7 @@ import java.util.Set;
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     @Column(name = "ID",  unique = true, nullable = false)
     private Long id;
 
@@ -27,6 +28,12 @@ public class Role {
     @Enumerated(EnumType.STRING)
     private RolesEnum name;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
     private Set<UserDAO> users;
+
+    @Override
+    public String toString() {
+        return name.toString();
+    }
 }

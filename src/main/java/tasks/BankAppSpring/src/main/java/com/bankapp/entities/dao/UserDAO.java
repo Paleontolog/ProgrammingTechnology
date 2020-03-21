@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -28,9 +30,15 @@ public class UserDAO {
     private String address;
     @OneToMany(mappedBy = "client", fetch=FetchType.LAZY)
     private List<AccountDAO> accounts;
+
     @Column(name = "PHONE", nullable = false, unique = true)
     private String phone;
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> userRoles;
+
+    public void addAccount(AccountDAO accountDAO) {
+        accounts.add(accountDAO);
+    }
+
 }

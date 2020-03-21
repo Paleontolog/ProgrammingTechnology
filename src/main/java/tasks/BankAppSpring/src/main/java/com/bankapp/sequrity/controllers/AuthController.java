@@ -10,6 +10,7 @@ import com.bankapp.database.UserRepository;
 import com.bankapp.entities.dao.UserDAO;
 import com.bankapp.entities.dto.UserDTO;
 import com.bankapp.mapper.EntityMapper;
+import com.bankapp.sequrity.entities.LoginRequest;
 import com.bankapp.sequrity.entities.Role;
 import com.bankapp.sequrity.entities.RolesEnum;
 import com.bankapp.sequrity.entities.UserDetailsImpl;
@@ -35,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 
 public class AuthController {
     @Autowired
@@ -53,7 +54,7 @@ public class AuthController {
 
     @ApiOperation("Login.")
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody UserDTO loginRequest) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getLogin(),
@@ -63,13 +64,11 @@ public class AuthController {
         String jwt = jwtUtils.generateJwtToken(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        System.out.println(userDetails.getAuthorities());
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(x-> x.getAuthority())
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(new JwtResponse(jwt,
-                userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getPhone(),
                 roles));
@@ -81,7 +80,7 @@ public class AuthController {
         if (userRepository.existsByLogin(signUpRequest.getLogin())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
+                    .body(new MessageResponse("Error: Username is already exist!"));
         }
 
         if (userRepository.existsByPhone(signUpRequest.getPhone())) {
@@ -95,7 +94,7 @@ public class AuthController {
         user.setPassword(encoder.encode(signUpRequest.getPassword()));
 
 
-        Set<Role> strRoles = signUpRequest.getRoles();
+        Set<String> strRoles = signUpRequest.getRoles();
         Set<Role> roles = new HashSet<>();
 
         if (strRoles == null) {
@@ -104,7 +103,7 @@ public class AuthController {
             roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
-                if (role.toString().equals("admin")) {
+                if (role.equalsIgnoreCase("admin")) {
                     Role adminRole = roleRepository.findByName(RolesEnum.ROLE_ADMIN)
                             .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                     roles.add(adminRole);

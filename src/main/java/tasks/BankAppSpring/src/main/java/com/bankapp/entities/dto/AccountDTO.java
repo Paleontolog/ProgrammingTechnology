@@ -14,4 +14,5 @@ public class AccountDTO {
     private Long clientId;
     private BigDecimal amount;
     private Currencies accCode;
+    private Boolean isMain;
 }
